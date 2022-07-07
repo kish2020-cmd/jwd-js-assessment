@@ -19,11 +19,46 @@
       5. Add a countdown timer - when the time is up, end the quiz, display the score and highlight the correct answers
 *************************** */
 
+
+
 window.addEventListener('DOMContentLoaded', () => {
+  var intervalObj;
+
+  function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+   intervalObj = setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {          
+           calculateScore();
+                     
+        }
+    }, 1000);
+   
+  }
+
+  const btnSubmit = document.querySelector('#btnSubmit');
+  btnSubmit.addEventListener('click', function (e) {
+    calculateScore();    
+  });
+
+
   const start = document.querySelector('#start');
   start.addEventListener('click', function (e) {
     document.querySelector('#quizBlock').style.display = 'block';
     start.style.display = 'none';
+
+     
+
+    var minutes = 60 * 1,
+        display = document.querySelector('#time');
+    startTimer(minutes, display);
   });
   // quizArray QUESTIONS & ANSWERS
   // q = QUESTION, o = OPTIONS, a = CORRECT ANSWER
@@ -44,6 +79,17 @@ window.addEventListener('DOMContentLoaded', () => {
       o: ['Sydney', 'Canberra', 'Melbourne', 'Perth'],
       a: 1,
     },
+    {
+      q: 'Which country gifted the "statue of Liberty" to USA in 1886 ?',
+      o: ['Germany', 'France', 'Itly', 'India'],
+      a: 1,
+    },
+    {
+      q: 'In which ocean "Bermuda Triangle" region is located ?',
+      o: ['Indian Ocean', 'Arctic Ocean', 'Pacific Ocean', 'North Atlantic Ocean'],
+      a: 3,
+    }
+
   ];
 
   // function to Display the quiz questions and answers from the object
@@ -65,6 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Calculate the score
   const calculateScore = () => {
+    clearInterval(intervalObj) ;
     let score = 0;
     quizArray.map((quizItem, index) => {
       for (let i = 0; i < 4; i++) {
@@ -72,19 +119,25 @@ window.addEventListener('DOMContentLoaded', () => {
         let li = `li_${index}_${i}`;
         let r = `radio_${index}_${i}`;
         liElement = document.querySelector('#' + li);
-        radioElement = document.querySelector('#' + r);
-
+        radioElement = document.querySelector('#' + r);        
+        
         if (quizItem.a == i) {
-          //change background color of li element here
+          //change background color of li element here          
+          liElement.classList.add('active');
         }
 
         if (radioElement.checked) {
           // code for task 1 goes here
+          if(quizItem.a == i)
+            score++;
         }
       }
     });
+    alert("You Scored "+score+" out of "+quizArray.length);
   };
 
   // call the displayQuiz function
   displayQuiz();
+
+  
 });
